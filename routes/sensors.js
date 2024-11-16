@@ -7,7 +7,7 @@ const { createSensorReading } = require('../services/sensors');
  * @swagger
  * /sensors/reading:
  *   post:
- *     summary: Create a new sensor reading,
+ *     summary: Create a new sensor reading
  *     tags:
  *       - Sensors
  *     responses:

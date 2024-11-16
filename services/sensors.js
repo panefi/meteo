@@ -1,6 +1,6 @@
 const { SensorReadingModel } = require('../models/sensors');
 const { executeQuery } = require('../database/database');
-const { CREATE_SENSOR_DATA, SELECT_ALL_STATIONS } = require('../database/queries/stations');
+const { CREATE_SENSOR_DATA, SELECT_ALL_STATIONS } = require('../database/queries/sensors');
 
 
 const createSensorReading = async (data) => {
