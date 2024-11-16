@@ -1,13 +1,56 @@
 var createError = require('http-errors');
 var express = require('express');
+var swaggerUi = require('swagger-ui-express');
+var swaggerJsdoc = require('swagger-jsdoc');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var stationsRouter = require('./routes/stations');  
+var sensorsRouter = require('./routes/sensors');
 
 var app = express();
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+
+// Swagger configuration
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Meteorological App',
+    version: '1.0.0',
+    description: 'This is a Meteorological Application API that provides various endpoints for managing stations and sensor data.'
+  },
+  servers: [
+    {
+      url: process.env.BASE_URL
+    }
+  ],
+  tags: [
+    {
+      name: 'Sensors',
+      description: 'API endpoints for managing sensor data'
+    }
+  ]
+}
+
+// Options for the swagger docs
+const options = {
+  swaggerDefinition,
+  // Paths to files containing OpenAPI definitions
+  apis: ['./routes/*.js'], // Adjust the path to your route files
+};
+
+// Initialize swagger-jsdoc
+const swaggerSpec = swaggerJsdoc(options);
+
+// Use swagger-ui-express for your app documentation endpoint
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,8 +62,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/', indexRouter);
+// app.use('/api/users', usersRouter);
+// app.use('/stations', stationsRouter);
+app.use('/api/sensor', sensorsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
