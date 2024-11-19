@@ -18,11 +18,11 @@ const StationForecast = Joi.object({
 })
 
 const StationQueryParams = Joi.object({
-    city: Joi.string().optional(),
-    page: Joi.number().optional(),
-    limit: Joi.number().optional(),
-    sort: Joi.string().required(),
-    sort_order: Joi.string().required()
+    city: Joi.string().optional().default(''),
+    page: Joi.number().optional().default(1),
+    limit: Joi.number().optional().default(50),
+    sort: Joi.string().optional().default('code'),
+    sort_order: Joi.string().optional().default('ASC')
 })
 
 const Station = Joi.object({

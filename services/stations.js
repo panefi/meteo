@@ -1,6 +1,7 @@
 const stationsModels = require('../models/stations');
 const { executeQuery } = require('../database/database');
 const stationsQueries = require('../database/queries/stations');
+const { validateSortingParameters, buildStationsQuery } = require('../utils/stations');
 
 
 const createStationForecast = async (data) => {
@@ -29,16 +30,23 @@ const createStationForecast = async (data) => {
 
 }
 
+const getStations = async (data) => {
+    const { value, error } = stationsModels.StationQueryParams.validate(data);
 
-// const createSensorReading = async (data) => {
-//     const { error } = SensorReadingModel.validate(data);
-//     if (error) {
-//         throw new Error(`Validation error: ${error.details[0].message}`);
-//     }
-//     const result = await executeQuery(CREATE_SENSOR_DATA, [data.sensor_id, data.station_code, data.date, data.type, data.measurement, data.unit]);
-//     return data;
-// }
+    const [sort, sort_order] = await validateSortingParameters(value.sort, value.sort_order);
+    const [final_query, params] = await buildStationsQuery(value.city, value.page, value.limit, sort, sort_order);
+
+    try {
+        const result = await executeQuery(final_query, params);
+        return result;
+    } 
+    catch (error) {
+        throw error;
+    }
+}
+
 
 module.exports = {
-    createStationForecast
+    createStationForecast,
+    getStations
 }
