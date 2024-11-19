@@ -221,7 +221,19 @@ router.post('/', async(req, res) => {
         const result = await createStation(req.body);
         res.status(201).json(req.body);
     } catch (error) {
-        res.status(500).json({ error: error });
+        if (error.code === "ER_DUP_ENTRY") {
+            res.status(409).json({
+                error: {
+                    message: `A station with the city name '${req.body.city}' already exists.`
+                }
+            });
+        }
+        else {
+        res.status(500).json({ 
+            error: {
+                message: 'An unexpected error occured.'
+            } });
+        }
     }
 });
 
