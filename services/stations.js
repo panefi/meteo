@@ -46,7 +46,21 @@ const getStations = async (data) => {
 }
 
 
+const createStation = async (data) => {
+    const { value, error } = stationsModels.Station.validate(data);
+
+    try {
+        const result = await executeQuery(stationsQueries.INSERT_STATION, [value.city, value.latitude, value.longitude, value.installation_date]);
+        return result;
+    } 
+    catch (error) {
+        throw error;
+    }
+}
+
+
 module.exports = {
     createStationForecast,
-    getStations
+    getStations,
+    createStation
 }
