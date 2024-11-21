@@ -36,7 +36,9 @@ const StationUpdate = Joi.object({
     city: Joi.string().optional(),
     latitude: Joi.number().optional(),
     longitude: Joi.number().optional(),
-    installation_date: Joi.date().optional()
+    installation_date: Joi.date().optional().custom((value) => {
+        return format(value, 'yyyy-MM-dd');
+    })
 })
 
 const StationDataRequest = Joi.object({

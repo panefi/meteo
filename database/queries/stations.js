@@ -10,6 +10,10 @@ ORDER BY {sort_column} {sort_order}
 LIMIT ? OFFSET ?;
 `
 
+GET_STATION_BY_CITY = `
+SELECT * FROM stations WHERE code = ?;
+`
+
 INSERT_STATION = `
 INSERT INTO stations (city, latitude, longitude, installation_date)
 VALUES (?, ?, ?, ?);
@@ -52,5 +56,6 @@ module.exports = {
     GET_STATION_DATA,
     GET_FORECAST,
     GET_STATION_DATA_SUMMARY,
-    CREATE_BATCH_SENSOR_DATA
+    CREATE_BATCH_SENSOR_DATA,
+    GET_STATION_BY_CITY
 }

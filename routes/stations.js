@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { createStationForecast, getStations, createStation } = require('../services/stations');
+const { createStationForecast, getStations, createStation, updateStation } = require('../services/stations');
 
 /**
  * @swagger
@@ -234,6 +234,42 @@ router.post('/', async(req, res) => {
                 message: 'An unexpected error occured.'
             } });
         }
+    }
+});
+
+/**
+ * @swagger
+ * /stations/{code}:
+ *   put:
+ *     summary: Update a station
+ *     description: Update a station by its code.
+ *     tags:
+ *       - Stations
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:    
+ *           schema:
+ *             type: object
+ *             properties:
+ *               city:
+ *                 type: string
+ *               latitude:
+ *                 type: number
+ *               longitude:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Station updated successfully
+ *       400:
+ *         description: Invalid input data format
+ */
+router.put('/:code', async(req, res) => {
+    try {
+        const result = await updateStation(req.params.code, req.body);
+        res.status(200).json(req.body);
+    } catch (error) {
+        res.status(500).json({ error: error });
     }
 });
 

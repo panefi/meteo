@@ -1,7 +1,7 @@
 const stationsModels = require('../models/stations');
 const { executeQuery } = require('../database/database');
 const stationsQueries = require('../database/queries/stations');
-const { validateSortingParameters, buildStationsQuery } = require('../utils/stations');
+const { validateSortingParameters, buildStationsQuery, updateStationInDb } = require('../utils/stations');
 
 
 const createStationForecast = async (data) => {
@@ -59,8 +59,25 @@ const createStation = async (data) => {
 }
 
 
+const updateStation = async (code, data) => {
+    const { value, error } = stationsModels.StationUpdate.validate(data);
+    const [final_query, params] = await updateStationInDb(code, value);
+
+    try {
+        const results = await executeQuery(final_query, params);
+
+        const updated_station = await executeQuery(stationsQueries.GET_STATION_BY_CITY, [code]);
+        return updated_station;
+    } 
+    catch (error) {
+        throw error;
+    }
+
+}
+
 module.exports = {
     createStationForecast,
     getStations,
-    createStation
+    createStation,
+    updateStation
 }

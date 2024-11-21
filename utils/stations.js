@@ -35,7 +35,32 @@ function buildStationsQuery(city, page, limit, sort, sort_order) {
 
 }
 
+function updateStationInDb(code, data) {
+    const validFields = ['city', 'latitude', 'longitude', 'installation_date'];
+    let updateParts = [];
+    let params = [];
+
+    for (const [field, value] of Object.entries(data)) {
+        if (validFields.includes(field)) {
+            updateParts.push(`${field} = ?`);
+            params.push(value);
+        }
+    }
+
+    if (updateParts.length === 0) {
+        throw new Error('No valid fields provided for update');
+    }
+
+    const finalQuery = `UPDATE stations SET ${updateParts.join(', ')} WHERE code = ?`;
+    params.push(code);
+
+    return [finalQuery, params];
+}
+
+
+
 module.exports = {
     validateSortingParameters,
-    buildStationsQuery
+    buildStationsQuery,
+    updateStationInDb
 }
