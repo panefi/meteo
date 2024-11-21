@@ -75,9 +75,19 @@ const updateStation = async (code, data) => {
 
 }
 
+const deleteStation = async (code) => {
+    try {
+        const result = await executeQuery(stationsQueries.DELETE_STATION, [code]);
+        return "Successful deletion";
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     createStationForecast,
     getStations,
     createStation,
-    updateStation
+    updateStation,
+    deleteStation
 }
