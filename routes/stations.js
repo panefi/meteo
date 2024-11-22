@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { createStationForecast, getStations, createStation, updateStation, deleteStation } = require('../services/stations');
+const { createStationForecast, getStations, createStation, updateStation, deleteStation, getStationData } = require('../services/stations');
 
 /**
  * @swagger
@@ -288,9 +288,80 @@ router.put('/:code', async(req, res) => {
  *         description: Invalid input data format
  */
 router.delete('/:code', async(req, res) => {
+    /*
+    Delete an existing station by its code.
+    */
     try {
         const result = await deleteStation(req.params.code);
         res.status(200).json({result: result});
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+});
+
+/**
+ * @swagger
+ * /stations/{code}:
+ *   post:
+ *     summary: Get station data
+ *     description: Get the data for a specific station by its code.
+ *     tags:
+ *       - Stations
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date_from:
+ *                 type: string
+ *               date_to:
+ *                 type: string
+ *               type:
+ *                 type: string
+ *               page:
+ *                 type: integer
+ *               limit:
+ *                 type: integer
+ *               sort:
+ *                 type: string
+ *               forecast:
+ *                 type: boolean
+ *               summary:
+ *                 type: boolean
+ *           example:
+ *             date_from: "2022-10-15"
+ *             date_to: "2024-10-16"
+ *             type: "wind"
+ *             page: 1
+ *             limit: 50
+ *             sort: "date"
+ *             forecast: false
+ *             summary: true
+ *     responses:
+ *       200:
+ *         description: Station data retrieved successfully
+ *       400:
+ *         description: Invalid input data format
+ */
+router.post('/:code', async(req, res) => {
+    /*
+    Request body containing filters for retrieving station data. 
+    Fields include:
+        - `date_from`: Start date for data retrieval.
+        - `date_to`: End date for data retrieval.
+        - `forecast`: Boolean indicating if forecast data should be retrieved.
+        - `summary`: Boolean: When true the average properties for the given period are retrieved.
+                                  "When false all data are retrieved and pagination is applied.
+        - `type`: Type of data to retrieve (e.g., 'temperature', 'humidity', 'wind').
+        - `page`: Page number for pagination.
+        - `limit`: Number of records per page.
+        - `sort`: Field to sort by (e.g., 'date', 'type').
+    */
+    try {
+        const result = await getStationData(req.params.code, req.body);
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ error: error });
     }

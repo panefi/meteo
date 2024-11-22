@@ -1,7 +1,7 @@
 const stationsModels = require('../models/stations');
 const { executeQuery } = require('../database/database');
 const stationsQueries = require('../database/queries/stations');
-const { validateSortingParameters, buildStationsQuery, updateStationInDb } = require('../utils/stations');
+const { validateSortingParameters, buildStationsQuery, updateStationInDb, getForecastForNextDay, getStationDataSummaryOrPaginated } = require('../utils/stations');
 
 
 const createStationForecast = async (data) => {
@@ -72,7 +72,6 @@ const updateStation = async (code, data) => {
     catch (error) {
         throw error;
     }
-
 }
 
 const deleteStation = async (code) => {
@@ -84,10 +83,28 @@ const deleteStation = async (code) => {
     }
 }
 
+const getStationData = async (code, data) => {
+    const { value, error } = stationsModels.StationDataRequest.validate(data);
+
+    let finalQuery = "";
+    let params = [];
+
+    if (value.forecast) {
+        [finalQuery, params] = getForecastForNextDay(code);
+    }
+    else {
+        [finalQuery, params] = getStationDataSummaryOrPaginated(code, data);
+    }
+    
+    const result = await executeQuery(finalQuery, params);
+    return result;
+}
+
 module.exports = {
     createStationForecast,
     getStations,
     createStation,
     updateStation,
-    deleteStation
+    deleteStation,
+    getStationData
 }

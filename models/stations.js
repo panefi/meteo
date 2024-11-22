@@ -37,13 +37,17 @@ const StationUpdate = Joi.object({
     latitude: Joi.number().optional(),
     longitude: Joi.number().optional(),
     installation_date: Joi.date().optional().custom((value) => {
-        return format(value, 'yyyy-MM-dd');
+        return format(value, 'yyyy-MM-ddTHH:mm:ss');
     })
 })
 
 const StationDataRequest = Joi.object({
-    date_from: Joi.date().optional(),
-    date_to: Joi.date().optional(),
+    date_from: Joi.date().optional().custom((value) => {
+        return format(value, 'yyyy-MM-ddTHH:mm:ss');
+    }),
+    date_to: Joi.date().optional().custom((value) => {
+        return format(value, 'yyyy-MM-ddTHH:mm:ss');
+    }),
     type: Joi.string().optional(),
     page: Joi.number().optional().default(1),
     limit: Joi.number().optional().default(50),
