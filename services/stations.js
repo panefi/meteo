@@ -100,11 +100,30 @@ const getStationData = async (code, data) => {
     return result;
 }
 
+const receiveBatchData = async (data) => {
+    try {
+        const { value, error } = stationsModels.BatchData.validate(data);
+        let errors = 0
+        for (const item of value.data) {
+            try {
+                const result = await executeQuery(stationsQueries.CREATE_BATCH_SENSOR_DATA, 
+                    [item.sensor_id, data.station_code, item.date, item.type, item.measurement, item.unit]);
+            } catch (error) {
+                errors += 1;
+                console.log(error.message);
+            }
+        }
+    } catch (error) {
+        throw new HTTPError(400, detail=error);
+    }
+}
+
 module.exports = {
     createStationForecast,
     getStations,
     createStation,
     updateStation,
     deleteStation,
-    getStationData
+    getStationData,
+    receiveBatchData
 }

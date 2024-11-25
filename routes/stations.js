@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { createStationForecast, getStations, createStation, updateStation, deleteStation, getStationData } = require('../services/stations');
+const { createStationForecast, getStations, createStation, updateStation, deleteStation, getStationData, receiveBatchData } = require('../services/stations');
 
 /**
  * @swagger
@@ -367,5 +367,28 @@ router.post('/:code', async(req, res) => {
     }
 });
 
+
+/**
+ * @swagger
+ * /stations/{code}/batch:
+ *   post:
+ *     summary: Receive batch data
+ *     description: Receive a batch of sensor data for a specific station.
+ *     tags:
+ *       - Stations
+ *     responses:
+ *       201:
+ *         description: Batch data received successfully
+ *       400:
+ *         description: Invalid input data format
+ */
+router.post('/:code/batch', async(req, res) => {
+    try {
+        const result = await receiveBatchData(req.body);
+        res.status(201).json(req.body);
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+});
 
 module.exports = router;
