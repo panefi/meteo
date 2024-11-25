@@ -34,6 +34,10 @@ const swaggerDefinition = {
     {
       name: 'Sensors',
       description: 'API endpoints for managing sensor data'
+    },
+    {
+      name: 'Stations',
+      description: 'API endpoints for managing stations'
     }
   ]
 }
