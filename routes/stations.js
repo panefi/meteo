@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const { createStationForecast, getStations, createStation, updateStation, deleteStation, getStationData, receiveBatchData } = require('../services/stations');
+const authenticateJWT = require('../services/middleware');
+
 
 /**
  * @swagger
@@ -121,7 +123,7 @@ router.post('/forecast', async(req, res) => {
  *       400:
  *         description: Invalid input data format
  */
-router.get('/', async(req, res) => {
+router.get('/', authenticateJWT, async(req, res) => {
     /**
     Get all stations with pagination and sorting or the station for a specific city.
 
@@ -204,7 +206,7 @@ router.get('/', async(req, res) => {
  *       400:
  *         description: Invalid input data format
  */
-router.post('/', async(req, res) => {
+router.post('/', authenticateJWT, async(req, res) => {
     /**
     Get all stations with pagination and sorting or the station for a specific city.
 
@@ -264,7 +266,7 @@ router.post('/', async(req, res) => {
  *       400:
  *         description: Invalid input data format
  */
-router.put('/:code', async(req, res) => {
+router.put('/:code', authenticateJWT, async(req, res) => {
     try {
         const result = await updateStation(req.params.code, req.body);
         res.status(200).json(req.body);
@@ -287,7 +289,7 @@ router.put('/:code', async(req, res) => {
  *       400:
  *         description: Invalid input data format
  */
-router.delete('/:code', async(req, res) => {
+router.delete('/:code', authenticateJWT, async(req, res) => {
     /*
     Delete an existing station by its code.
     */
@@ -345,7 +347,7 @@ router.delete('/:code', async(req, res) => {
  *       400:
  *         description: Invalid input data format
  */
-router.post('/:code', async(req, res) => {
+router.post('/:code', authenticateJWT, async(req, res) => {
     /*
     Request body containing filters for retrieving station data. 
     Fields include:
@@ -382,7 +384,7 @@ router.post('/:code', async(req, res) => {
  *       400:
  *         description: Invalid input data format
  */
-router.post('/:code/batch', async(req, res) => {
+router.post('/:code/batch', authenticateJWT, async(req, res) => {
     try {
         const result = await receiveBatchData(req.body);
         res.status(201).json(req.body);

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const { createSensorReading } = require('../services/sensors');
+const authenticateJWT = require('../services/middleware');
 
 
 /**
@@ -16,7 +17,7 @@ const { createSensorReading } = require('../services/sensors');
  *       400:
  *         description: Invalid input data format
  */
-router.post('/reading', async(req, res) => {
+router.post('/reading', authenticateJWT, async(req, res) => {
     /**
     Insert a new sensor reading into the database.
 
