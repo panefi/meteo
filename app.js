@@ -38,6 +38,10 @@ const swaggerDefinition = {
     {
       name: 'Stations',
       description: 'API endpoints for managing stations'
+    },
+    {
+      name: 'Users',
+      description: 'API endpoints for managing users'
     }
   ]
 }
@@ -67,7 +71,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/', indexRouter);
-// app.use('/api/users', usersRouter);
+app.use('/api/users', usersRouter);
 app.use('/api/stations', stationsRouter);
 app.use('/api/sensor', sensorsRouter);
 
