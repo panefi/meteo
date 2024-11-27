@@ -11,13 +11,64 @@ const authenticateJWT = require('../services/middleware');
  *     summary: Create a station forecast
  *     tags:
  *       - Stations
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               station_code:
+ *                 type: integer
+ *               forecast:
+ *                 type: object
+ *                 properties:
+ *                   wind:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: number
+ *                       unit:
+ *                         type: string
+ *                   humidity:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: number
+ *                       unit:
+ *                         type: string
+ *                   temperature:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: number
+ *                       unit:
+ *                         type: string
+ *           example:
+ *             date: "2024-08-15"
+ *             station_code: 1
+ *             forecast:
+ *               wind:
+ *                 value: 5.5
+ *                 unit: "m/s"
+ *               humidity:
+ *                 value: 80
+ *                 unit: "%"
+ *               temperature:
+ *                 value: 22.5
+ *                 unit: "Celsius"
  *     responses:
  *       200:
  *         description: Forecast created successfully
  *       400:
  *         description: Invalid input data format
  */
-router.post('/forecast', async(req, res) => {
+router.post('/forecast', authenticateJWT, async(req, res) => {
     /**
     Create a forecast for a specific station on a given date.
 
@@ -65,6 +116,8 @@ router.post('/forecast', async(req, res) => {
  *     description: Get all stations with pagination and sorting or the station for a specific city.
  *     tags:
  *       - Stations
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - name: city
  *         in: query
@@ -167,6 +220,8 @@ router.get('/', authenticateJWT, async(req, res) => {
  *     description: Create a new station.
  *     tags:
  *       - Stations
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -174,22 +229,20 @@ router.get('/', authenticateJWT, async(req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               code:
- *                 type: integer
- *               name:
- *                 type: string
  *               city:
  *                 type: string
  *               latitude:
  *                 type: number
  *               longitude:
  *                 type: number
+ *               installation_date:
+ *                 type: string
+ *                 format: date
  *           example:
- *             code: 1
- *             name: "Station 1"
  *             city: "City 1"
  *             latitude: 10.0
  *             longitude: 20.0
+ *             installation_date: "2024-08-15"
  *     responses:
  *       201:
  *         description: Station created successfully
@@ -255,10 +308,12 @@ router.post('/', authenticateJWT, async(req, res) => {
  *     description: Update a station by its code.
  *     tags:
  *       - Stations
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:    
+ *         application/json:
  *           schema:
  *             type: object
  *             properties:
@@ -268,6 +323,14 @@ router.post('/', authenticateJWT, async(req, res) => {
  *                 type: number
  *               longitude:
  *                 type: number
+ *               installation_date:
+ *                 type: string
+ *                 format: date
+ *           example:
+ *             city: "City 1"
+ *             latitude: 10.0
+ *             longitude: 20.0
+ *             installation_date: "2024-08-15"
  *     responses:
  *       200:
  *         description: Station updated successfully
@@ -291,6 +354,15 @@ router.put('/:code', authenticateJWT, async(req, res) => {
  *     description: Delete a station by its code.
  *     tags:
  *       - Stations
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: code
+ *         in: path
+ *         required: true
+ *         description: The code of the station to delete
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
  *         description: Station deleted successfully
@@ -317,6 +389,8 @@ router.delete('/:code', authenticateJWT, async(req, res) => {
  *     description: Get the data for a specific station by its code.
  *     tags:
  *       - Stations
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -386,6 +460,8 @@ router.post('/:code', authenticateJWT, async(req, res) => {
  *     description: Receive a batch of sensor data for a specific station.
  *     tags:
  *       - Stations
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       201:
  *         description: Batch data received successfully

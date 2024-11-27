@@ -3,7 +3,6 @@ var router = express.Router();
 const { createSensorReading } = require('../services/sensors');
 const authenticateJWT = require('../services/middleware');
 
-
 /**
  * @swagger
  * /api/sensors/reading:
@@ -11,6 +10,37 @@ const authenticateJWT = require('../services/middleware');
  *     summary: Create a new sensor reading
  *     tags:
  *       - Sensors
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sensor_id:
+ *                 type: string
+ *               station_code:
+ *                 type: integer
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *               type:
+ *                 type: string
+ *                 enum: [temperature, wind, humidity]
+ *               measurement:
+ *                 type: number
+ *               unit:
+ *                 type: string
+ *                 enum: [Celsius, m/s, %]
+ *           example:
+ *             sensor_id: "sensor123"
+ *             station_code: 456
+ *             date: "2024-08-15T14:30:00Z"
+ *             type: "temperature"
+ *             measurement: 22.5
+ *             unit: "Celsius"
  *     responses:
  *       201:
  *         description: Sensor reading created successfully

@@ -25,6 +25,18 @@ const swaggerDefinition = {
     version: '1.0.0',
     description: 'This is a Meteorological Application API that provides various endpoints for managing stations and sensor data.'
   },
+  components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT'
+      }
+    }
+  },
+  security: {
+    BearerAuth: []
+  },
   servers: [
     {
       url: process.env.BASE_URL
