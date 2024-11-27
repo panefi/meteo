@@ -5,10 +5,11 @@ const { logInUser, signUpUser } = require('../services/users');
 
 /**
  * @swagger
- * /users/signup:
+ * /api/users/signup:
  *   post:
  *     summary: Signup user
- *     description: Signup user
+ *     tags:
+ *       - Users
  *     responses:
  *       200:
  *         description: User signed up
@@ -27,10 +28,12 @@ router.post('/signup', async(req, res) => {
 
 /**
  * @swagger
- * /users/login:
+ * /api/users/login:
  *   post:
  *     summary: Login user
  *     description: Login user
+ *     tags:
+ *       - Users
  *     responses:
  *       200:
  *         description: User logged in

@@ -6,7 +6,7 @@ const authenticateJWT = require('../services/middleware');
 
 /**
  * @swagger
- * /stations/forecast:
+ * /api/stations/forecast:
  *   post:
  *     summary: Create a station forecast
  *     tags:
@@ -59,35 +59,43 @@ router.post('/forecast', async(req, res) => {
 
 /**
  * @swagger
- * /stations/:
+ * /api/stations/:
  *   get:
  *     summary: Get stations
  *     description: Get all stations with pagination and sorting or the station for a specific city.
  *     tags:
  *       - Stations
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               city:
- *                 type: string
- *               page:
- *                 type: integer
- *               limit:
- *                 type: integer
- *               sort:
- *                 type: string
- *               sort_order:
- *                 type: string
- *           example:
- *             city: "City 1"
- *             page: 1
- *             limit: 10
- *             sort: "name"
- *             sort_order: "ASC"
+ *     parameters:
+ *       - name: city
+ *         in: query
+ *         description: The city to filter stations by
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: page
+ *         in: query
+ *         description: The page number for pagination
+ *         required: false
+ *         schema:
+ *           type: integer
+ *       - name: limit
+ *         in: query
+ *         description: The number of records per page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *       - name: sort
+ *         in: query
+ *         description: The field to sort by (e.g., 'name', 'city')
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: sort_order
+ *         in: query
+ *         description: The order of sorting ('ASC' for ascending, 'DESC' for descending)
+ *         required: false
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Stations retrieved successfully
@@ -153,7 +161,7 @@ router.get('/', authenticateJWT, async(req, res) => {
 
 /**
  * @swagger
- * /stations/:
+ * /api/stations/:
  *   post:
  *     summary: Create a station
  *     description: Create a new station.
@@ -241,7 +249,7 @@ router.post('/', authenticateJWT, async(req, res) => {
 
 /**
  * @swagger
- * /stations/{code}:
+ * /api/stations/{code}:
  *   put:
  *     summary: Update a station
  *     description: Update a station by its code.
@@ -277,7 +285,7 @@ router.put('/:code', authenticateJWT, async(req, res) => {
 
 /**
  * @swagger
- * /stations/{code}:
+ * /api/stations/{code}:
  *   delete:
  *     summary: Delete a station    
  *     description: Delete a station by its code.
@@ -303,7 +311,7 @@ router.delete('/:code', authenticateJWT, async(req, res) => {
 
 /**
  * @swagger
- * /stations/{code}:
+ * /api/stations/{code}:
  *   post:
  *     summary: Get station data
  *     description: Get the data for a specific station by its code.
@@ -372,7 +380,7 @@ router.post('/:code', authenticateJWT, async(req, res) => {
 
 /**
  * @swagger
- * /stations/{code}/batch:
+ * /api/stations/{code}/batch:
  *   post:
  *     summary: Receive batch data
  *     description: Receive a batch of sensor data for a specific station.

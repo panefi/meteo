@@ -6,7 +6,7 @@ const authenticateJWT = require('../services/middleware');
 
 /**
  * @swagger
- * /sensors/reading:
+ * /api/sensors/reading:
  *   post:
  *     summary: Create a new sensor reading
  *     tags:
