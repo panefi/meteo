@@ -5,6 +5,7 @@ var swaggerJsdoc = require('swagger-jsdoc');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -16,6 +17,13 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+// Configure CORS
+const corsOptions = {
+  origin: process.env.FRONTEND_URL,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 // Swagger configuration
 const swaggerDefinition = {
