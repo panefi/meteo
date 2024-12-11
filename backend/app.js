@@ -6,6 +6,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+const passport = require('passport');
+const session = require('express-session');
+require('./auth');
+const jwt = require('jsonwebtoken');
+const { generateToken } = require('./auth');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -20,7 +25,8 @@ dotenv.config();
 // Configure CORS
 const corsOptions = {
   origin: process.env.FRONTEND_URL,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  credentials: true
 };
 
 app.use(cors(corsOptions));
@@ -69,7 +75,6 @@ const swaggerDefinition = {
 // Options for the swagger docs
 const options = {
   swaggerDefinition,
-  // Paths to files containing OpenAPI definitions
   apis: ['./routes/*.js'], // Adjust the path to your route files
 };
 
@@ -90,23 +95,49 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.use(session({
+  secret: process.env.COOKIE_KEY,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Google OAuth routes
+app.get('/auth/google', passport.authenticate('google', {
+  scope: ['profile', 'email']
+}));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
+  const token = generateToken(req.user);
+  res.redirect(`http://localhost:8080/stations?token=${token}`);
+});
+
+app.get('/api/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
+
+app.get('/api/current_user', (req, res) => {
+  res.send(req.user);
+});
+
 app.use('/api/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/stations', stationsRouter);
 app.use('/api/sensor', sensorsRouter);
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });

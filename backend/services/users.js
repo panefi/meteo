@@ -4,7 +4,6 @@ const { executeQuery } = require('../database/database');
 const { GET_USER } = require('../database/queries/users');
 const { UserModel } = require('../models/users');
 
-
 const signUpUser = async (data) => {
     const { error } = UserModel.validate(data);
     if (error) throw new Error(error.message);
@@ -26,12 +25,22 @@ const logInUser = async (data) => {
     }
 
     // Proceed with generating JWT
-    const token = jwt.sign({ userId: user[0].id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ email: user[0].email }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return { token };
 }
 
+function getUserProfile(email, callback) {
+    executeQuery(GET_USER, [email], (err, results) => {
+        if (err || results.length === 0) {
+            return callback('User not found', null);
+        }
+        const user = results[0];
+        callback(null, { email: user.email, name: user.name });
+    });
+}
 
 module.exports = {
     logInUser,
-    signUpUser
+    signUpUser,
+    getUserProfile
 }

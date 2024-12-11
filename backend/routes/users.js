@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const { logInUser, signUpUser } = require('../services/users');
+const { logInUser, signUpUser, getUserProfile } = require('../services/users');
+const { authenticateJWT } = require('../services/middleware');
 
 /**
  * @swagger
@@ -16,16 +17,16 @@ const { logInUser, signUpUser } = require('../services/users');
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               email:
  *                 type: string
  *               password:
  *                 type: string
- *               email:
+ *               name:
  *                 type: string
  *           example:
- *             username: "newuser"
- *             password: "password123"
  *             email: "newuser@example.com"
+ *             password: "password123"
+ *             name: "New User"
  *     responses:
  *       201:
  *         description: Account created successfully
@@ -33,12 +34,12 @@ const { logInUser, signUpUser } = require('../services/users');
  *         description: Bad request
  *     security: []
  */
-router.post('/signup', async(req, res) => {
+router.post('/signup', async (req, res) => {
   try {
     const result = await signUpUser(req.body);
-    res.status(201).json({"result": "Account created successfully"});
+    res.status(201).json({ result: "Account created successfully" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -83,13 +84,53 @@ router.post('/signup', async(req, res) => {
  *         description: Bad request
  *     security: []
  */
-router.post('/login', async(req, res) => {
+router.post('/login', async (req, res) => {
   try {
-      const result = await logInUser(req.body);
-      res.status(200).json(result);
+    const user = await logInUser(req.body);
+    const token = generateToken(user);
+    res.status(200).json({ token });
   } catch (error) {
-      res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
+});
+
+/**
+ * @swagger
+ * /api/users/profile:
+ *   get:
+ *     summary: Get user profile
+ *     description: Get authenticated user's profile
+ *     tags:
+ *       - Users
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 email:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *             example:
+ *               email: "user@example.com"
+ *               name: "John Doe"
+ *       404:
+ *         description: User not found
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/profile', authenticateJWT, (req, res) => {
+  getUserProfile(req.user.email, (err, user) => {
+    if (err) {
+      return res.status(404).json({ error: err });
+    }
+    res.json(user);
+  });
 });
 
 module.exports = router;

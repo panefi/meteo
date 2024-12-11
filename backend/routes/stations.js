@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const { createStationForecast, getStations, createStation, updateStation, deleteStation, getStationData, receiveBatchData } = require('../services/stations');
-const authenticateJWT = require('../services/middleware');
+const { authenticateJWT } = require('../services/middleware');
 
 
 /**
@@ -207,7 +207,7 @@ router.get('/', authenticateJWT, async(req, res) => {
         const result = await getStations(req.query);
         res.status(200).json(result);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -342,7 +342,7 @@ router.put('/:code', authenticateJWT, async(req, res) => {
         const result = await updateStation(req.params.code, req.body);
         res.status(200).json(req.body);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -377,7 +377,7 @@ router.delete('/:code', authenticateJWT, async(req, res) => {
         const result = await deleteStation(req.params.code);
         res.status(200).json({result: result});
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -447,7 +447,7 @@ router.post('/:code', authenticateJWT, async(req, res) => {
         const result = await getStationData(req.params.code, req.body);
         res.status(200).json(result);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -473,7 +473,7 @@ router.post('/:code/batch', authenticateJWT, async(req, res) => {
         const result = await receiveBatchData(req.body);
         res.status(201).json(req.body);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 
