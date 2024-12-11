@@ -1,27 +1,24 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
-import SensorsView from '../views/SensorsView.vue';
-
-
-const baseUrl = process.env.VUE_APP_BASE_URL || '/';
+import StationsView from '../views/StationsView.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomeView,
+    component: HomeView
   },
   {
-    path: '/sensors',
-    name: 'Sensors',
-    component: SensorsView,
-  },
+    path: '/stations',
+    name: 'Stations',
+    component: StationsView
+  }
 ];
 
 const router = createRouter({
-  history: createWebHistory(baseUrl),
-  routes,
+  history: createWebHistory(process.env.BASE_URL),
+  routes
 });
 
 export default router;
