@@ -11,17 +11,11 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/stations">Stations</router-link>
             </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/sensors">Sensors</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/sensorsData">Measurements</router-link>
-            </li>
           </ul>
         </div>
       </div>
     </nav>
-  </div>
+  </div> 
 </template>
 
 <script>

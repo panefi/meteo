@@ -9,6 +9,7 @@
           <th scope="col">Latitude</th>
           <th scope="col">Longitude</th>
           <th scope="col">Installation Date</th>
+          <th scope="col" class="text-center">Sensors</th>
         </tr>
       </thead>
       <tbody>
@@ -18,18 +19,43 @@
           <td>{{ station.latitude }}</td>
           <td>{{ station.longitude }}</td>
           <td>{{ station.installation_date }}</td>
+          <td class="text-center">
+            <button class="btn btn-primary btn-sm" @click="openModal(station.code)">View Sensors</button>
+          </td>
         </tr>
       </tbody>
     </table>
+    <SensorsDataModal
+      :show="showModal"
+      :stationCode="selectedStationCode"
+      @close="showModal = false"
+    />
   </div>
 </template>
 
 <script>
+import SensorsDataModal from './SensorsDataModal.vue';
+
 export default {
+  components: {
+    SensorsDataModal
+  },
   props: {
     stations: {
       type: Array,
       required: true
+    }
+  },
+  data() {
+    return {
+      showModal: false,
+      selectedStationCode: null
+    };
+  },
+  methods: {
+    openModal(stationCode) {
+      this.selectedStationCode = stationCode;
+      this.showModal = true;
     }
   }
 };
@@ -42,5 +68,11 @@ export default {
 .thead-dark th {
   background-color: #343a40;
   color: white;
+}
+.text-center {
+  text-align: center;
+}
+.btn-primary {
+  margin: 0;
 }
 </style>

@@ -55,5 +55,18 @@ export default {
           console.error('Error logging in:', error);
           throw error;
         }
+      },
+      async getSensorsData(stationCode) {
+        try {
+          const response = await apiClient.post(`/stations/${stationCode}`, {
+            "page": 1,
+            "limit": 50,
+            "sort": "date",
+          });
+          return response.data;
+        } catch (error) {
+          console.error('Error fetching sensors data:', error);
+          throw error;
+        }
       }
 };
