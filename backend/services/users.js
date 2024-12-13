@@ -18,13 +18,16 @@ const logInUser = async (data) => {
     if (error) throw new Error(error.message);
 
     const user = await executeQuery(GET_USER, [data.email]);
-    const isPasswordValid = await bcrypt.compare(data.password, user[0].password_hash);
+    if (user.length === 0) {
+        throw new Error('User not found');
+    }
 
+    const isPasswordValid = await bcrypt.compare(data.password, user[0].password_hash);
     if (!isPasswordValid) {
         throw new Error('Invalid credentials');
     }
 
-    // Proceed with generating JWT
+    // Generate JWT token
     const token = jwt.sign({ email: user[0].email }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return { token };
 }

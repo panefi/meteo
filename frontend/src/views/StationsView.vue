@@ -26,13 +26,14 @@
     },
     methods: {
       checkTokenAndFetchStations() {
+        console.log('Checking token and fetching stations');
         const token = localStorage.getItem('jwt');
+        console.log('Token:', token);
         if (token) {
           console.log('Retrieved JWT Token:', token);
           this.fetchStations();
         } else {
           console.error('No token found in local storage');
-          // redirect to login page
           this.$router.push('/login');
         }
       },

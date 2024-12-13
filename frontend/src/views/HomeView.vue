@@ -11,6 +11,10 @@
         <label for="password">Password:</label>
         <input type="password" v-model="password" required />
       </div>
+      <div>
+        <label for="full_name">Full Name:</label>
+        <input type="text" v-model="full_name" required />
+      </div>
       <button type="submit">Sign In</button>
     </form>
     <button @click="loginWithGoogle">Login with Google</button>
@@ -25,24 +29,25 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      full_name: ''
     };
   },
   methods: {
     async handleLogin() {
       try {
-        const response = await apiService.login({ email: this.email, password: this.password });
-        localStorage.removeItem('jwt');
-        localStorage.setItem('jwt', response.token);
-        console.log('Stored JWT Token:', localStorage.getItem('jwt'));
-        // Redirect or perform other actions
-        this.$router.push('/stations');
+        const response = await apiService.login({ email: this.email, password: this.password, name: this.full_name });
+        console.log('Login response:', response);
+        if (response.token) {
+          localStorage.setItem('jwt', response.token);
+          console.log('Stored JWT Token:', localStorage.getItem('jwt'));
+          this.$router.push('/stations');
+        } else {
+          console.error('No token received from server');
+        }
       } catch (error) {
         console.error('Error logging in:', error);
       }
-    },
-    loginWithGoogle() {
-      window.location.href = `${process.env.VUE_APP_API_URL}/auth/google`;
     }
   }
 };

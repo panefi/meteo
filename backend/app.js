@@ -8,9 +8,6 @@ var logger = require('morgan');
 var cors = require('cors');
 const passport = require('passport');
 const session = require('express-session');
-require('./auth');
-const jwt = require('jsonwebtoken');
-const { generateToken } = require('./auth');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -105,25 +102,6 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Google OAuth routes
-app.get('/auth/google', passport.authenticate('google', {
-  scope: ['profile', 'email']
-}));
-
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
-  const token = generateToken(req.user);
-  res.redirect(`http://localhost:8080/stations?token=${token}`);
-});
-
-app.get('/api/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
-});
-
-app.get('/api/current_user', (req, res) => {
-  res.send(req.user);
-});
 
 app.use('/api/', indexRouter);
 app.use('/api/users', usersRouter);

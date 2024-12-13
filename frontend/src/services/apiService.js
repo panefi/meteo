@@ -1,7 +1,6 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-
 const apiClient = axios.create({
     baseURL: process.env.VUE_APP_API_URL,
     headers: {
@@ -10,30 +9,22 @@ const apiClient = axios.create({
     withCredentials: true,
 });
 
-async function refreshToken() {
-    try {
-        const response = await axios.post(`${process.env.VUE_APP_API_URL}/users/refresh-token`);
-        const newToken = response.data.token;
-        localStorage.setItem('jwt', newToken);
-        return newToken;
-    } catch (error) {
-        console.error('Error refreshing token:', error);
-        throw error;
-    }
-}
-
-apiClient.interceptors.request.use(async config => {
-    let token = localStorage.getItem('jwt');
+apiClient.interceptors.request.use(config => {
+    const token = localStorage.getItem('jwt');
     if (token) {
         const decoded = jwtDecode(token);
         const currentTime = Date.now() / 1000;
         if (decoded.exp < currentTime) {
             // Token is expired, refresh it
-            token = await refreshToken();
+            console.log('Token expired');
+            // take them to login page
+            window.location.href = '/';
         }
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
+}, error => {
+    return Promise.reject(error);
 });
 
 console.log(apiClient);

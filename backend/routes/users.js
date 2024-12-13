@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const { logInUser, signUpUser, getUserProfile } = require('../services/users');
 const { authenticateJWT } = require('../services/middleware');
+const jwt = require('jsonwebtoken');
 
 /**
  * @swagger
